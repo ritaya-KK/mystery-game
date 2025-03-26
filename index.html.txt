@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>研修室の『立半』～消えた契約書と5人の容疑者～</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>研修室の『立半』</h1>
+        <p>～消えた契約書と5人の容疑者～</p>
+
+        <div id="story">
+            <h2>プロローグ</h2>
+            <p>今日は重要な営業研修の日。しかし、休憩時間終了後、研修室の隅で営業部のエース「立半（たちはん）」が倒れているのが発見された！<br>
+            傍らには割れたマグカップと、謎のメモが落ちている。どうやら彼は何かを伝えようとしていたようだ。<br>
+            そして、彼のデスクからは、今日締結予定だった大型契約書が消えている…！<br>
+            状況から見て、これは事故ではない。容疑者は、同じ研修に参加していた同僚の5人。<br>
+            君たち研修参加者は、チームで協力し、残された証拠と容疑者の証言から、立半を襲い、契約書を奪った犯人を見つけ出さなければならない！</p>
+            <button onclick="startGame()">ゲーム開始</button>
+        </div>
+
+        <div id="puzzle1" class="puzzle-section" style="display: none;">
+            <h2>【謎１】現場に残されたダイイングメッセージ</h2>
+            <p>立半のそばには、奇妙なメモが落ちていた。これは彼が残したダイイングメッセージかもしれない。<br>
+            メモにはこう書かれている。「<strong>33.93943 / 134.51015 = X</strong>」<br>
+            そして、彼のPCのログインパスワードのヒントは「Xの場所にある建物」だという。<br>
+            チームで協力して、このメモの意味を解き明かし、PCへのログインパスワードを突き止めろ！</p>
+            <p>（ヒント：数字の羅列は何を意味する？インターネットで検索してみよう！）</p>
+            <img src="memo_image.png" alt="謎のメモ" width="300"> <br>
+            <label for="answer1">PCのパスワード：</label>
+            <input type="text" id="answer1">
+            <button onclick="checkAnswer(1)">解答する</button>
+            <p id="feedback1" class="feedback"></p>
+        </div>
+
+        <div id="puzzle2" class="puzzle-section" style="display: none;">
+            <h2>【謎２】容疑者たちの証言と矛盾</h2>
+            <p>PCの中には、容疑者5人の今日の行動記録と、立半との関係を示すメールの一部が見つかった。<br>
+            各チームで証言をよく読み、矛盾点や怪しい点を探し出そう。</p>
+            <div class="suspects">
+                <div class="suspect"><strong>つるい：</strong>「休憩時間は、ほとんど自分の席にいたよ。立半とは少し話したが、口論なんてしていない。」（伏線：目撃情報と食い違う）</div>
+                <div class="suspect"><strong>たいしゅう：</strong>「気分が悪くて、トイレに篭っていた。立半さんが倒れていたのは、他の人から聞いて知った。」（伏線：顔色一つ変えなかった理由は？）</div>
+                <div class="suspect"><strong>ささき：</strong>「立半に忘れ物を届けに行っただけだ。彼のデスクには近づいていない。」（伏線：デスク周りをうろついていた目撃情報と矛盾）</div>
+                <div class="suspect"><strong>あたえ：</strong>「経理の急ぎの連絡があって、スマホで対応していた。立半とは金銭の貸し借り？ まあ、少しね…」（伏線：金銭トラブルの詳細を隠している？）</div>
+                <div class="suspect"><strong>ちゅうえい：</strong>「大事な電話があって、研修室の外で話していた。10分くらいかな。」（伏線：アリバイが曖昧。誰と話していた？）</div>
+            </div>
+            <p>これらの証言と、PC内の情報（例：監視カメラの一部映像で、ささきが何かを拾う様子が映っていた等）を照らし合わせ、最も怪しい人物とその理由を考えよう。</p>
+            <label for="answer2">最も怪しい人物の名前：</label>
+            <input type="text" id="answer2">
+            <button onclick="checkAnswer(2)">解答する</button>
+            <p id="feedback2" class="feedback"></p>
+        </div>
+
+        <div id="puzzle3" class="puzzle-section" style="display: none;">
+            <h2>【謎３】犯人の特定と最後の証拠</h2>
+            <p>謎1と謎2で得られた情報を整理しよう。<br>
+            PCのデータから、立半が「ある人物」に強引な契約の協力を迫っていたメールが見つかった。<br>
+            また、立半が倒れていた場所の近くから、小さな「赤いボタン」が見つかった。これは誰の持ち物だろうか？<br>
+            さらに、謎1のパスワード「XXXXX」（謎1の正解）が示す場所は、ある重要な意味を持っている。</p>
+            <p>全ての情報を繋ぎ合わせ、立半を襲い、契約書を奪った真犯人を特定しよう！</p>
+            <label for="answer3">犯人の名前：</label>
+            <input type="text" id="answer3">
+            <button onclick="checkAnswer(3)">最終解答</button>
+            <p id="feedback3" class="feedback"></p>
+        </div>
+
+        <div id="result" class="puzzle-section" style="display: none;">
+            <h2>結果発表</h2>
+            <p id="finalMessage"></p>
+            <h3>解説</h3>
+            <p id="explanation"></p>
+            <hr>
+            <h3>チームワークについて</h3>
+            <p>今回の謎解きでは、様々な情報（数字、証言、状況証拠）を組み合わせ、多角的な視点で考える必要がありました。一人では気づかないことも、チームで意見を出し合い、役割分担し、情報を共有することで、より早く、正確に答えにたどり着くことができます。</p>
+            <p>これは営業活動も同じです。個々の能力も重要ですが、チームメンバーと連携し、顧客情報や成功・失敗事例を共有し、互いにサポートし合うことで、組織として大きな成果を上げることができます。「チームで戦う」ことの面白さ、そしてその力を、これからの活動に活かしてください！</p>
+        </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
