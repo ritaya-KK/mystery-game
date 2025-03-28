@@ -40,22 +40,40 @@ PCのパスワードは、この場所の名称をローマ字（すべて大文
 `;
 
 // --- ゲーム進行ロジック ---
-// (変更なし)
 
 function startGame() {
-    document.getElementById('story').style.display = 'none';
-    document.getElementById('puzzle1').style.display = 'block';
+    // 要素が存在するか確認してから処理（念のため）
+    const storyElement = document.getElementById('story');
+    const puzzle1Element = document.getElementById('puzzle1');
+    if (storyElement && puzzle1Element) {
+        storyElement.style.display = 'none';
+        puzzle1Element.style.display = 'block';
+        // ゲーム開始時に最初の問題が見えるようにスクロール（任意）
+        puzzle1Element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+        console.error("必要な要素が見つかりません: #story または #puzzle1");
+    }
 }
 
 function checkAnswer(puzzleNumber) {
-    const userAnswer = document.getElementById(`answer${puzzleNumber}`).value.trim();
+    // 要素が存在するか確認
+    const answerInput = document.getElementById(`answer${puzzleNumber}`);
     const feedbackElement = document.getElementById(`feedback${puzzleNumber}`);
+    const nextPuzzleElement = document.getElementById(`puzzle${puzzleNumber + 1}`);
+    const resultElement = document.getElementById('result');
+    const currentPuzzleButton = document.querySelector(`#puzzle${puzzleNumber} button`);
+
+    if (!answerInput || !feedbackElement || !currentPuzzleButton) {
+        console.error(`パズル${puzzleNumber}の要素が見つかりません。`);
+        return; // 要素がなければ処理中断
+    }
+
+    const userAnswer = answerInput.value.trim();
     let isCorrect = false;
     let correctAnswer = '';
 
     if (puzzleNumber === 1) {
         correctAnswer = answerKey1;
-        // 大文字小文字を区別しない比較
         if (userAnswer.toUpperCase() === correctAnswer.toUpperCase()) {
             isCorrect = true;
         }
@@ -71,64 +89,65 @@ function checkAnswer(puzzleNumber) {
         }
     }
 
+    // フィードバック表示リセット
+    feedbackElement.textContent = '';
+    feedbackElement.className = 'feedback'; // クラスをリセット
+
     if (isCorrect) {
         feedbackElement.textContent = "正解！ 次の情報を確認しよう。";
-        feedbackElement.className = 'feedback correct';
+        feedbackElement.classList.add('correct'); // 正解クラス追加
+
+        // 入力欄とボタンを無効化
+        answerInput.disabled = true;
+        currentPuzzleButton.disabled = true;
+
         if (puzzleNumber < 3) {
-            // 少し遅れて次の問題を表示（アニメーションの代わり）
-            setTimeout(() => {
-                document.getElementById(`puzzle${puzzleNumber + 1}`).style.display = 'block';
-                // 画面を少し下にスクロールして次の問題を見やすくする（任意）
-                document.getElementById(`puzzle${puzzleNumber + 1}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 500); // 0.5秒後
+            // 次の問題要素が存在するか確認
+            if (nextPuzzleElement) {
+                // 少し遅れて次の問題を表示
+                setTimeout(() => {
+                    nextPuzzleElement.style.display = 'block';
+                    // 画面を少し下にスクロールして次の問題を見やすくする
+                    nextPuzzleElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 500); // 0.5秒後
+            } else {
+                 console.error(`次のパズル要素 #puzzle${puzzleNumber + 1} が見つかりません。`);
+                 // 最後の問題だったかのように結果を表示させることも検討できる
+                 setTimeout(() => { displayResult(true); }, 500);
+            }
         } else {
-            // 少し遅れて結果を表示
-             setTimeout(() => {
-                displayResult(true);
-             }, 500);
+            // 最後の問題なら結果を表示
+             setTimeout(() => { displayResult(true); }, 500);
         }
-        document.getElementById(`answer${puzzleNumber}`).disabled = true;
-        document.querySelector(`#puzzle${puzzleNumber} button`).disabled = true;
 
     } else {
         feedbackElement.textContent = "不正解。もう一度チームで情報を整理してみよう。";
-        feedbackElement.className = 'feedback incorrect';
-        // 不正解の時に少し入力欄を揺らすアニメーション（おまけ）
-        const inputElement = document.getElementById(`answer${puzzleNumber}`);
-        inputElement.classList.add('shake');
-        setTimeout(() => {
-            inputElement.classList.remove('shake');
-        }, 500);
+        feedbackElement.classList.add('incorrect'); // 不正解クラス追加
 
+        // 不正解の時に少し入力欄を揺らすアニメーション
+        answerInput.classList.add('shake');
+        // アニメーションが終わったらクラスを削除
+        setTimeout(() => {
+            answerInput.classList.remove('shake');
+        }, 400); // アニメーション時間（CSSで指定した0.4s）に合わせる
+
+        // 最終問題で不正解の場合も結果を表示
         if (puzzleNumber === 3) {
-             setTimeout(() => {
-                 displayResult(false);
-             }, 500);
+             setTimeout(() => { displayResult(false); }, 500);
         }
     }
 }
 
-// 不正解時に揺れるCSSアニメーション (style.css に追加しても良い)
-const styleSheet = document.styleSheets[0];
-styleSheet.insertRule(`
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  50% { transform: translateX(5px); }
-  75% { transform: translateX(-5px); }
-  100% { transform: translateX(0); }
-}`, styleSheet.cssRules.length);
-
-styleSheet.insertRule(`
-.shake {
-  animation: shake 0.5s ease-in-out;
-}`, styleSheet.cssRules.length);
-
-
 function displayResult(isGameClear) {
+    // 要素が存在するか確認
     const resultSection = document.getElementById('result');
     const finalMessage = document.getElementById('finalMessage');
     const explanation = document.getElementById('explanation');
+
+    if (!resultSection || !finalMessage || !explanation) {
+        console.error("結果表示用の要素が見つかりません: #result, #finalMessage, または #explanation");
+        return; // 要素がなければ処理中断
+    }
 
     if (isGameClear) {
         finalMessage.textContent = `素晴らしい！チームで見事、真犯人【${answerKey3}】を突き止めた！`;
@@ -141,8 +160,21 @@ function displayResult(isGameClear) {
     resultSection.style.display = 'block';
     resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); // 結果表示時にスクロール
 
-    // 前の設問を非表示にする（任意）
-    // document.getElementById('puzzle1').style.display = 'none';
-    // document.getElementById('puzzle2').style.display = 'none';
-    // document.getElementById('puzzle3').style.display = 'none';
+    // オプション：前の設問を非表示にする場合
+    // const puzzle1 = document.getElementById('puzzle1');
+    // const puzzle2 = document.getElementById('puzzle2');
+    // const puzzle3 = document.getElementById('puzzle3');
+    // if(puzzle1) puzzle1.style.display = 'none';
+    // if(puzzle2) puzzle2.style.display = 'none';
+    // if(puzzle3) puzzle3.style.display = 'none';
 }
+
+// ページ読み込み完了後に処理を開始したい場合は、以下のコメントアウトを外す
+/*
+window.addEventListener('DOMContentLoaded', (event) => {
+    // ゲーム開始ボタンにイベントリスナーを設定する場合など、
+    // DOM要素へのアクセスが必要な初期化処理をここに入れる。
+    // ただし、今回はstartGame()がボタンのonclickで呼ばれるため、必須ではない。
+    console.log('DOM fully loaded and parsed');
+});
+*/
