@@ -90,9 +90,9 @@ label {
     margin-top: 15px;
 }
 .suspect {
-    margin-bottom: 20px;
+    margin-bottom: 20px; /* 各容疑者の間隔を少し広げる */
     padding: 15px;
-    background-color: #f9f9f9;
+    background-color: #f9f9f9; /* 背景色を少し変える */
     border: 1px solid #eee;
     border-radius: 4px;
     overflow: hidden; /* floatの回り込み対策 */
@@ -106,8 +106,8 @@ label {
 }
 
 .suspect img {
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 1px solid #ddd; /* 画像に枠線 */
+    border-radius: 4px; /* 画像の角を少し丸める */
     /* floatスタイルはHTML側でインライン指定 */
 }
 
@@ -116,27 +116,27 @@ label {
 .hint {
     font-size: 0.9em;
     color: #666;
-    display: block;
+    display: block; /* ブロック要素にして改行 */
     margin-bottom: 10px;
 }
 
 .evidence {
     display: block;
-    margin-top: 8px;
+    margin-top: 8px; /* 上の要素との間隔 */
     padding: 8px;
-    background-color: #e9ecef;
-    border-left: 4px solid #17a2b8; /* 情報系 */
+    background-color: #e9ecef; /* 背景色 */
+    border-left: 4px solid #17a2b8; /* 左側のボーダー色 (情報系) */
     font-size: 0.9em;
-    color: #495057;
+    color: #495057; /* 文字色 */
 }
 
 .suspicion {
     display: block;
-    margin-top: 5px;
+    margin-top: 5px; /* 上の要素との間隔 */
     padding-left: 10px;
-    border-left: 4px solid #dc3545; /* 警告・怪しい点 */
+    border-left: 4px solid #dc3545; /* 左側のボーダー色 (警告・怪しい点) */
     font-style: italic;
-    color: #dc3545;
+    color: #dc3545; /* 文字色 (赤系) */
     font-size: 0.9em;
 }
 
