@@ -1,180 +1,111 @@
-// --- 謎と解答の設定 ---
-// 謎1：緯度経度 -> 場所 -> パスワード
-// 35.6895 / 139.6917 は東京都庁の緯度経度
-const answerKey1 = "TOCHOU"; // 東京都庁 -> TOCHOU (ローマ字大文字)
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>研修室の『立半』～消えた契約書と5人の容疑者～</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>研修室の『立半』</h1>
+        <p>～消えた契約書と5人の容疑者～</p>
 
-// 謎2：証言の矛盾から最も怪しい人物を絞る
-// 動機とPC内の決定的情報から「あたえ」が最も怪しい
-const answerKey2 = "あたえ";
+        <div id="story">
+            <h2>プロローグ</h2>
+            <p>ここは、とある企業の研修室。今日は、選抜された営業部員向けの重要な研修が行われる日だ。<br>
+            午前中のセッションが終わり、昼休憩の時間。しかし、休憩終了のチャイムが鳴っても、営業部の若きエース「立半（たちはん）」が席に戻らない。<br>
+            不審に思った上司の「ちゅうえい」が様子を見に行くと…研修室の隅、給湯スペースの近くで立半が倒れているのを発見した！<br>
+            彼の傍らには、割れたマグカップの破片が散らばり、微かにコーヒーのような匂いが漂っている。そして、いくつかの書類に混じって、一枚の奇妙なメモが落ちていた。<br>
+            さらに、彼のデスクからは、今日午後に最終締結予定だった**『極秘』の大型契約に関する重要書類**がフォルダごと消え失せていることが判明した…！<br>
+            状況から見て、これは単なる事故ではなさそうだ。誰かが立半を襲い、契約書を奪ったに違いない。<br>
+            容疑者は、同じ研修に参加しており、休憩時間中に研修室に残っていた同僚5名。君たち研修参加者はチームとなり、残された手掛かりから真実を突き止めなければならない！<br>
+            調査すべきは、**現場の状況**、**落ちていたメモ**、**容疑者たちの証言**、そして**立半のパソコン**に残された情報だ。</p>
+            <img src="crime_scene.png" alt="事件現場の様子" width="400" style="display: block; margin: 15px auto;"> <button onclick="startGame()">捜査開始</button>
+        </div>
 
-// 謎3：全ての情報から犯人を特定
-// 決定的な証拠（ボタン、チャットログ）と動機から犯人は「あたえ」
-const answerKey3 = "あたえ";
+        <div id="puzzle1" class="puzzle-section" style="display: none;">
+            <h2>【謎１】現場に残されたダイイングメッセージ？</h2>
+            <p>立半のそばに落ちていた奇妙なメモ。彼が最後に伝えようとしたメッセージかもしれない。<br>
+            メモにはこう書かれている。「<strong>35.6895 / 139.6917 = X</strong>」<br>
+            この数字は何かの座標を示しているようだ。チームで協力して、これが示す場所を特定しよう。<br>
+            <span class="hint">（ヒント：数字のペアを地図アプリや検索エンジンで調べてみよう！）</span><br>
+            さらに、彼のパソコンにはパスワードロックがかかっている。ログインパスワードのヒントは「**Xの場所の名称をローマ字（すべて大文字）で入力**」することだという。<br>
+            さあ、メモの謎を解き明かし、パソコンへのログインパスワードを突き止めろ！</p>
+            <img src="memo_image.png" alt="謎のメモ" width="300" style="display: block; margin: 10px auto;"> <br> <label for="answer1">PCのパスワード：</label>
+            <input type="text" id="answer1">
+            <button onclick="checkAnswer(1)">解答する</button>
+            <p id="feedback1" class="feedback"></p>
+        </div>
 
-// --- 解説テキスト ---
-const explanationText = `
-【解説】 真犯人は【あたえ】でした！
+        <div id="puzzle2" class="puzzle-section" style="display: none;">
+            <h2>【謎２】容疑者たちの証言と食い違う事実</h2>
+            <p>立半のPCにログイン成功！中には、今日のスケジュール、メールの送受信履歴、そして監視カメラ（研修室後方に設置）の記録をテキスト化したメモが見つかった。<br>
+            容疑者5名の証言と、PCから得られた情報を照らし合わせてみよう。</p>
+            <div class="suspects">
+                <div class="suspect">
+                    <strong>1. つるい（同期・ライバル）:</strong><br>
+                    <img src="tsurui.png" alt="つるい" width="150" style="float: left; margin: 0 10px 5px 0;"> 「休憩中は自席で明日のプレゼン資料を考えていた。立半とは少し話したが、口論なんて大げさな。まあ、アイツのやり方に一言言っただけだよ。」<br style="clear: both;"> <span class="evidence">PC情報：立半宛のメールに「お前だけ抜け駆けは許さない。今日の契約の件、俺にも関わらせろ」という下書きを発見。監視カメラ記録メモに『つるい、立半に詰め寄る。「抜け駆けは許さん！」との声』と記載あり。</span><br>
+                    <span class="suspicion">伏線：立半への強い対抗心。証言と監視カメラ記録のニュアンスが違う。</span>
+                </div>
+                <div class="suspect">
+                    <strong>2. たいしゅう（部下）:</strong><br>
+                    <img src="taishu.png" alt="たいしゅう" width="150" style="float: left; margin: 0 10px 5px 0;"> 「立半さんには厳しく指導されていました…。休憩中は気分が悪くて、ほとんど自席でうつむいていました。彼が倒れたのは、ちゅうえいさんの声で知りました。」<br style="clear: both;"> <span class="evidence">PC情報：個人のメモフォルダに「退職検討中。立半さんの下では限界」というファイル。同僚の証言「たいしゅう君はずっと席で資料を読んでいた」。監視カメラ記録メモに『たいしゅう、自席で頭を抱える様子』と記載あり。</span><br>
+                    <span class="suspicion">伏線：立半への不満。ただし、休憩中のアリバイは比較的しっかりしている？発見時の冷静さは気になるが…。</span>
+                </div>
+                <div class="suspect">
+                    <strong>3. ささき（他部署の友人）:</strong><br>
+                    <img src="sasaki.png" alt="ささき" width="150" style="float: left; margin: 0 10px 5px 0;"> 「立半とは古い付き合いでね。最近ちょっと強引なやり方が気になって、休憩中に忘れ物を届けるついでに、少し話そうと思ったんだ。でも、忙しそうだったからすぐ席に戻ったよ。彼のデスクには近づいていない。」<br style="clear: both;"> <span class="evidence">PC情報：立半宛のメールに「例の件、もう一度考え直せ。危ない橋は渡るな」と送信済み。監視カメラ記録メモに『ささき、立半のデスク近くで何か（メモ？）を拾い、すぐに立ち去る』と記載あり。他の参加者の目撃証言「ささきさんが立半さんの近くで何か拾っていた」。</span><br>
+                    <span class="suspicion">伏線：立半との意見対立。「忘れ物を届けた」「デスクに近づいていない」は嘘で、何かを隠している？メモを拾ったのは事実のようだが…。</span>
+                </div>
+                <div class="suspect">
+                    <strong>4. あたえ（経理部）:</strong><br>
+                    <img src="atae.png" alt="あたえ" width="150" style="float: left; margin: 0 10px 5px 0;"> 「経理から緊急の連絡があって、スマホで対応していました。立半さんとは…個人的に少しお金の貸し借りが。でも、事件とは関係ないはずです。」<br style="clear: both;"> <span class="evidence">PC情報：**（重要）**パスワードで保護されたチャットアプリのログを発見。立半が「例の件、協力しないなら借金のことをバラすぞ」とあたえを脅迫し、経理情報を使った不正な取引への協力を強要している内容。あたえの返信「もうやめてくれ…」。監視カメラ記録メモに『あたえ、休憩中スマホを頻繁に確認。顔色が悪い』と記載あり。今日の服装はグレーのジャケット。</span><br>
+                    <span class="suspicion">伏線：金銭トラブルに加え、立半から脅迫・強要を受けていた。動機は十分？服装も覚えておこう。</span>
+                </div>
+                <div class="suspect">
+                    <strong>5. ちゅうえい（上司）:</strong><br>
+                    <img src="chuei.png" alt="ちゅうえい" width="150" style="float: left; margin: 0 10px 5px 0;"> 「彼のスタンドプレーには困っていてね。一度ちゃんと話そうと思っていたんだが…。休憩中は、大事なクライアントと長電話をしていて、ほとんど席を外していたよ。15分くらいかな。」<br style="clear: both;"> <span class="evidence">PC情報：人事評価に関するメモフォルダに「立半、チームワーク欠如。次期評価で降格検討」というメモ。スマートフォンの通話履歴で、休憩時間中に取引先のA社担当者と18分間の通話記録を確認（A社担当者にも裏付けが取れた）。</span><br>
+                    <span class="suspicion">伏線：立半の扱いに悩んでいた。しかし、長電話のアリバイは固い。</span>
+                </div>
+            </div>
+            <p>これらの情報から、現段階で**最も犯行の可能性が高いと思われる人物**は誰だろうか？ チームで議論してみよう。</p>
+            <label for="answer2">最も怪しい人物の名前：</label>
+            <input type="text" id="answer2">
+            <button onclick="checkAnswer(2)">解答する</button>
+            <p id="feedback2" class="feedback"></p>
+        </div>
 
-**【謎１】ダイイングメッセージ？の解読**
-メモの数字「35.6895 / 139.6917」は、地図アプリなどで検索すると「東京都庁」の位置を示します。
-PCのパスワードは、この場所の名称をローマ字（すべて大文字）にしたものなので、「TOCHOU」が正解でした。
-これにより、立半のPCにアクセスし、重要な情報を得ることができました。チームでの情報検索・共有がポイントでしたね。
+        <div id="puzzle3" class="puzzle-section" style="display: none;">
+            <h2>【謎３】決定的な証拠と真犯人</h2>
+            <p>謎1、謎2で集めた情報を整理し、真犯人を特定しよう。<br>
+            現場を再度よく調べてみると、立半が倒れていた場所の床に、**小さな赤いボタン**が落ちているのが見つかった。これは誰かの衣服から取れたものだろうか？</p>
+            <img src="red_button.png" alt="赤いボタン" width="100" style="display: block; margin: 10px auto;"> <p>思い出してみよう。容疑者たちの服装は？ 特に、あたえが着ていたジャケットの色は…？</p>
+            <p>さらに、謎2で確認したPC内の情報、特に**あたえと立半のチャットログ**の内容は決定的だ。立半はあたえに対し、借金を盾に不正な取引への協力を強要していた。<br>
+            そして、立半が残したメモの場所（謎1の答え）も、単なる偶然ではないかもしれない…。（例えば、過去に二人が密会していた場所、不正取引に関わる場所など、想像を膨らませてみよう）</p>
+            <p>他の容疑者についてはどうだろうか？<br>
+            ・**つるい:** 動機はあるが、犯行に及ぶほどの決定的な証拠がない。<br>
+            ・**たいしゅう:** 不満はあったが、休憩中のアリバイがあり、犯行の機会は少なそうだ。<br>
+            ・**ささき:** メモを拾ったのは事実だが、それは犯行とは別問題。立半を心配していた様子もある。<br>
+            ・**ちゅうえい:** アリバイが証明されている。</p>
+            <p>すべての情報を繋ぎ合わせ、立半を襲い、契約書を奪った真犯人を特定しよう！</p>
+            <label for="answer3">犯人の名前：</label>
+            <input type="text" id="answer3">
+            <button onclick="checkAnswer(3)">最終解答</button>
+            <p id="feedback3" class="feedback"></p>
+        </div>
 
-**【謎２】容疑者たちの証言と食い違う事実**
-この段階で最も怪しい人物として、何人か候補が挙がったのではないでしょうか？
-・**ささき:** 「デスクに近づいていない」という嘘をつき、メモを拾っていました。立半を心配して忠告に来たが、追い返されたことを隠していたようです。嘘は怪しいですが、これが直接犯行に結びつく証拠はありませんでした。メモを拾ったのは偶然の可能性が高いです。
-・**あたえ:** 立半から借金があり、さらに不正への協力を強要されていたことがPCのチャットログから判明しました。強い動機があり、この段階で最も犯人である可能性が高いと考えられます。顔色が悪かったのも、これらのプレッシャーによるものでしょう。
-・**つるい:** 立半への対抗心は強いですが、具体的な犯行計画や証拠は見つかりませんでした。監視カメラの記録も、口論の範囲を出ません。
-・**たいしゅう、ちゅうえい:** それぞれ立半への不満や悩みはありましたが、アリバイがある程度しっかりしていました。（ちゅうえいは通話記録、たいしゅうは目撃証言）
-チーム内で、「誰が一番怪しいか」「その根拠は何か」を議論することが重要でした。
+        <div id="result" class="puzzle-section" style="display: none;">
+            <h2>結果発表</h2>
+            <p id="finalMessage"></p>
+            <h3>解説</h3>
+            <p id="explanation"></p> <hr>
+            <h3>チームワークについて</h3>
+            <p>今回の謎解きでは、ダイイングメッセージ？の解読、複数の容疑者の証言と客観的な情報の比較検討、そして現場に残された小さな証拠の発見と、様々な角度からのアプローチが必要でした。一人だけで全ての情報に気づき、正しく繋ぎ合わせるのは難しかったかもしれません。</p>
+            <p>チームで役割分担（情報検索、証言分析、証拠探しなど）し、気づいたことを共有し、時には意見をぶつけ合いながら推理を進めることで、より早く、正確に真相に近づくことができます。これは日々の営業活動においても全く同じです。個々の力も大切ですが、チームとして情報を共有し、互いの強みを活かし、弱みを補い合うことで、一人では達成できない大きな成果を生み出すことができるのです。</p>
+            <p>この研修で体験した「チームで謎を解く面白さ」と「チームで協力する力」を、ぜひ今後の皆さんの活動に活かしてください！</p>
+        </div>
 
-**【謎３】決定的な証拠と真犯人**
-最終的な決め手は、現場に落ちていた「赤いボタン」と、PC内の「チャットログ」でした。
-・**赤いボタン:** これは、あたえが着ていたグレーのジャケットの袖についていたものと一致しました。立半ともみ合いになった際に取れたものと考えられます。（謎2の服装情報を思い出せましたか？）
-・**チャットログ:** 立半があたえに対し、借金と経理情報悪用を持ち出して脅迫し、不正な取引への協力を強要していた動かぬ証拠です。
-これらの証拠と強い動機（借金苦、脅迫からの逃亡、そしておそらくは契約書を奪うことによる状況の打開）から、犯人は【あたえ】であると特定できました。
-
-立半は、あたえに襲われた後、最後の力を振り絞り、不正取引や密会に関連のある場所（東京都庁）を示すメモを残そうとしたのかもしれません。
-
-このように、断片的な情報を集め、整理し、客観的な証拠と証言を結びつけていくことで、真実にたどり着くことができます。これはまさにチームで行う営業活動と同じですね！
-`;
-
-// --- ゲーム進行ロジック ---
-
-function startGame() {
-    // 要素が存在するか確認してから処理（念のため）
-    const storyElement = document.getElementById('story');
-    const puzzle1Element = document.getElementById('puzzle1');
-    if (storyElement && puzzle1Element) {
-        storyElement.style.display = 'none';
-        puzzle1Element.style.display = 'block';
-        // ゲーム開始時に最初の問題が見えるようにスクロール（任意）
-        puzzle1Element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-        console.error("必要な要素が見つかりません: #story または #puzzle1");
-    }
-}
-
-function checkAnswer(puzzleNumber) {
-    // 要素が存在するか確認
-    const answerInput = document.getElementById(`answer${puzzleNumber}`);
-    const feedbackElement = document.getElementById(`feedback${puzzleNumber}`);
-    const nextPuzzleElement = document.getElementById(`puzzle${puzzleNumber + 1}`);
-    const resultElement = document.getElementById('result');
-    const currentPuzzleButton = document.querySelector(`#puzzle${puzzleNumber} button`);
-
-    if (!answerInput || !feedbackElement || !currentPuzzleButton) {
-        console.error(`パズル${puzzleNumber}の要素が見つかりません。`);
-        return; // 要素がなければ処理中断
-    }
-
-    const userAnswer = answerInput.value.trim();
-    let isCorrect = false;
-    let correctAnswer = '';
-
-    if (puzzleNumber === 1) {
-        correctAnswer = answerKey1;
-        if (userAnswer.toUpperCase() === correctAnswer.toUpperCase()) {
-            isCorrect = true;
-        }
-    } else if (puzzleNumber === 2) {
-        correctAnswer = answerKey2;
-        if (userAnswer === correctAnswer) {
-             isCorrect = true;
-        }
-    } else if (puzzleNumber === 3) {
-        correctAnswer = answerKey3;
-        if (userAnswer === correctAnswer) {
-            isCorrect = true;
-        }
-    }
-
-    // フィードバック表示リセット
-    feedbackElement.textContent = '';
-    feedbackElement.className = 'feedback'; // クラスをリセット
-
-    if (isCorrect) {
-        feedbackElement.textContent = "正解！ 次の情報を確認しよう。";
-        feedbackElement.classList.add('correct'); // 正解クラス追加
-
-        // 入力欄とボタンを無効化
-        answerInput.disabled = true;
-        currentPuzzleButton.disabled = true;
-
-        if (puzzleNumber < 3) {
-            // 次の問題要素が存在するか確認
-            if (nextPuzzleElement) {
-                // 少し遅れて次の問題を表示
-                setTimeout(() => {
-                    nextPuzzleElement.style.display = 'block';
-                    // 画面を少し下にスクロールして次の問題を見やすくする
-                    nextPuzzleElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 500); // 0.5秒後
-            } else {
-                 console.error(`次のパズル要素 #puzzle${puzzleNumber + 1} が見つかりません。`);
-                 // 最後の問題だったかのように結果を表示させることも検討できる
-                 setTimeout(() => { displayResult(true); }, 500);
-            }
-        } else {
-            // 最後の問題なら結果を表示
-             setTimeout(() => { displayResult(true); }, 500);
-        }
-
-    } else {
-        feedbackElement.textContent = "不正解。もう一度チームで情報を整理してみよう。";
-        feedbackElement.classList.add('incorrect'); // 不正解クラス追加
-
-        // 不正解の時に少し入力欄を揺らすアニメーション
-        answerInput.classList.add('shake');
-        // アニメーションが終わったらクラスを削除
-        setTimeout(() => {
-            answerInput.classList.remove('shake');
-        }, 400); // アニメーション時間（CSSで指定した0.4s）に合わせる
-
-        // 最終問題で不正解の場合も結果を表示
-        if (puzzleNumber === 3) {
-             setTimeout(() => { displayResult(false); }, 500);
-        }
-    }
-}
-
-function displayResult(isGameClear) {
-    // 要素が存在するか確認
-    const resultSection = document.getElementById('result');
-    const finalMessage = document.getElementById('finalMessage');
-    const explanation = document.getElementById('explanation');
-
-    if (!resultSection || !finalMessage || !explanation) {
-        console.error("結果表示用の要素が見つかりません: #result, #finalMessage, または #explanation");
-        return; // 要素がなければ処理中断
-    }
-
-    if (isGameClear) {
-        finalMessage.textContent = `素晴らしい！チームで見事、真犯人【${answerKey3}】を突き止めた！`;
-        finalMessage.style.color = 'green';
-    } else {
-        finalMessage.textContent = `残念！犯人の特定には至らなかった...。真犯人は【${answerKey3}】でした。`;
-        finalMessage.style.color = 'red';
-    }
-    explanation.innerText = explanationText; // innerTextで改行を反映
-    resultSection.style.display = 'block';
-    resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); // 結果表示時にスクロール
-
-    // オプション：前の設問を非表示にする場合
-    // const puzzle1 = document.getElementById('puzzle1');
-    // const puzzle2 = document.getElementById('puzzle2');
-    // const puzzle3 = document.getElementById('puzzle3');
-    // if(puzzle1) puzzle1.style.display = 'none';
-    // if(puzzle2) puzzle2.style.display = 'none';
-    // if(puzzle3) puzzle3.style.display = 'none';
-}
-
-// ページ読み込み完了後に処理を開始したい場合は、以下のコメントアウトを外す
-/*
-window.addEventListener('DOMContentLoaded', (event) => {
-    // ゲーム開始ボタンにイベントリスナーを設定する場合など、
-    // DOM要素へのアクセスが必要な初期化処理をここに入れる。
-    // ただし、今回はstartGame()がボタンのonclickで呼ばれるため、必須ではない。
-    console.log('DOM fully loaded and parsed');
-});
-*/
+    </div>
+    <script src="script.js"></script> </body>
+</html>
