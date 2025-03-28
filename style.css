@@ -41,11 +41,18 @@ button {
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    transition: background-color 0.2s ease; /* ホバー効果を滑らかに */
 }
 
 button:hover {
     background-color: #0056b3;
 }
+
+button:disabled { /* 解答後のボタンのスタイル */
+    background-color: #cccccc;
+    cursor: default;
+}
+
 
 input[type="text"] {
     padding: 8px;
@@ -55,6 +62,11 @@ input[type="text"] {
     width: 200px;
 }
 
+input[type="text"]:disabled { /* 解答後の入力欄のスタイル */
+    background-color: #eeeeee;
+}
+
+
 label {
     font-weight: bold;
 }
@@ -63,6 +75,7 @@ label {
     margin-top: 10px;
     font-weight: bold;
     text-align: center;
+    min-height: 1.2em; /* メッセージが表示されていなくても高さを確保 */
 }
 
 .correct {
@@ -77,9 +90,9 @@ label {
     margin-top: 15px;
 }
 .suspect {
-    margin-bottom: 20px; /* 各容疑者の間隔を少し広げる */
+    margin-bottom: 20px;
     padding: 15px;
-    background-color: #f9f9f9; /* 背景色を少し変える */
+    background-color: #f9f9f9;
     border: 1px solid #eee;
     border-radius: 4px;
     overflow: hidden; /* floatの回り込み対策 */
@@ -88,11 +101,14 @@ label {
 .suspect strong {
     font-size: 1.1em;
     color: #333;
+    display: inline-block; /* 改行後のマージン調整用 */
+    margin-bottom: 5px;
 }
 
 .suspect img {
-    border: 1px solid #ddd; /* 画像に枠線 */
-    border-radius: 4px; /* 画像の角を少し丸める */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    /* floatスタイルはHTML側でインライン指定 */
 }
 
 
@@ -100,27 +116,27 @@ label {
 .hint {
     font-size: 0.9em;
     color: #666;
-    display: block; /* ブロック要素にして改行 */
+    display: block;
     margin-bottom: 10px;
 }
 
 .evidence {
     display: block;
-    margin-top: 8px; /* 上の要素との間隔 */
+    margin-top: 8px;
     padding: 8px;
-    background-color: #e9ecef; /* 背景色 */
-    border-left: 4px solid #17a2b8; /* 左側のボーダー色 (情報系) */
+    background-color: #e9ecef;
+    border-left: 4px solid #17a2b8; /* 情報系 */
     font-size: 0.9em;
-    color: #495057; /* 文字色 */
+    color: #495057;
 }
 
 .suspicion {
     display: block;
-    margin-top: 5px; /* 上の要素との間隔 */
+    margin-top: 5px;
     padding-left: 10px;
-    border-left: 4px solid #dc3545; /* 左側のボーダー色 (警告・怪しい点) */
+    border-left: 4px solid #dc3545; /* 警告・怪しい点 */
     font-style: italic;
-    color: #dc3545; /* 文字色 (赤系) */
+    color: #dc3545;
     font-size: 0.9em;
 }
 
@@ -130,8 +146,20 @@ label {
 }
 
 #explanation {
-    white-space: pre-line; /* JavaScript内の改行を反映させる */
+    white-space: pre-line; /* JavaScript内の改行(innerText)を反映させる */
     background-color: #f8f9fa;
     padding: 15px;
     border-left: 5px solid #6c757d;
+}
+
+/* 不正解時の入力欄揺れアニメーション */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+}
+
+.shake {
+  animation: shake 0.4s ease-in-out;
 }
