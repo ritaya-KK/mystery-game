@@ -42,7 +42,7 @@ PCのパスワードは、この場所の名称をローマ字（すべて大文
 // --- ゲーム進行ロジック ---
 
 function startGame() {
-    // 要素が存在するか確認してから処理（念のため）
+    // 要素が存在するか確認してから処理
     const storyElement = document.getElementById('story');
     const puzzle1Element = document.getElementById('puzzle1');
     if (storyElement && puzzle1Element) {
@@ -50,8 +50,9 @@ function startGame() {
         puzzle1Element.style.display = 'block';
         // ゲーム開始時に最初の問題が見えるようにスクロール（任意）
         puzzle1Element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        console.log("startGame: ゲーム開始処理を実行しました。"); // 動作確認用ログ
     } else {
-        console.error("必要な要素が見つかりません: #story または #puzzle1");
+        console.error("startGame エラー: 必要な要素が見つかりません: #story または #puzzle1");
     }
 }
 
@@ -60,13 +61,29 @@ function checkAnswer(puzzleNumber) {
     const answerInput = document.getElementById(`answer${puzzleNumber}`);
     const feedbackElement = document.getElementById(`feedback${puzzleNumber}`);
     const nextPuzzleElement = document.getElementById(`puzzle${puzzleNumber + 1}`);
-    const resultElement = document.getElementById('result');
     const currentPuzzleButton = document.querySelector(`#puzzle${puzzleNumber} button`);
 
-    if (!answerInput || !feedbackElement || !currentPuzzleButton) {
-        console.error(`パズル${puzzleNumber}の要素が見つかりません。`);
-        return; // 要素がなければ処理中断
+    // 要素が見つからない場合はエラーログを出力して処理中断
+    if (!answerInput) {
+        console.error(`checkAnswer エラー: 要素 #answer${puzzleNumber} が見つかりません。`);
+        return;
     }
+    if (!feedbackElement) {
+        console.error(`checkAnswer エラー: 要素 #feedback${puzzleNumber} が見つかりません。`);
+        return;
+    }
+    if (!currentPuzzleButton) {
+        console.error(`checkAnswer エラー: パズル${puzzleNumber} のボタンが見つかりません。`);
+        return;
+    }
+    // 次の問題や結果表示要素も念のためログで確認（ただし、これらが無くても途中までは動くはず）
+    if (puzzleNumber < 3 && !nextPuzzleElement) {
+        console.warn(`checkAnswer 警告: 次のパズル要素 #puzzle${puzzleNumber + 1} が見つかりません。`);
+    }
+    if (puzzleNumber === 3 && !document.getElementById('result')) {
+         console.warn(`checkAnswer 警告: 結果表示要素 #result が見つかりません。`);
+    }
+
 
     const userAnswer = answerInput.value.trim();
     let isCorrect = false;
@@ -93,47 +110,48 @@ function checkAnswer(puzzleNumber) {
     feedbackElement.textContent = '';
     feedbackElement.className = 'feedback'; // クラスをリセット
 
+    console.log(`checkAnswer(${puzzleNumber}): ユーザー解答="${userAnswer}", 正解判定=${isCorrect}`); // 動作確認用ログ
+
     if (isCorrect) {
         feedbackElement.textContent = "正解！ 次の情報を確認しよう。";
-        feedbackElement.classList.add('correct'); // 正解クラス追加
+        feedbackElement.classList.add('correct');
 
-        // 入力欄とボタンを無効化
         answerInput.disabled = true;
         currentPuzzleButton.disabled = true;
 
         if (puzzleNumber < 3) {
-            // 次の問題要素が存在するか確認
             if (nextPuzzleElement) {
-                // 少し遅れて次の問題を表示
                 setTimeout(() => {
                     nextPuzzleElement.style.display = 'block';
-                    // 画面を少し下にスクロールして次の問題を見やすくする
                     nextPuzzleElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 500); // 0.5秒後
+                    console.log(`checkAnswer(${puzzleNumber}): 次のパズル #puzzle${puzzleNumber + 1} を表示しました。`); // 動作確認用ログ
+                }, 500);
             } else {
-                 console.error(`次のパズル要素 #puzzle${puzzleNumber + 1} が見つかりません。`);
-                 // 最後の問題だったかのように結果を表示させることも検討できる
+                 // 次のパズル要素がない場合も、エラーではなく最後の問題だったかのように結果表示を試みる
+                 console.warn(`checkAnswer(${puzzleNumber}): 次のパズル要素が見つからないため、結果表示を試みます。`);
                  setTimeout(() => { displayResult(true); }, 500);
             }
         } else {
-            // 最後の問題なら結果を表示
-             setTimeout(() => { displayResult(true); }, 500);
+             setTimeout(() => {
+                 displayResult(true);
+                 console.log(`checkAnswer(${puzzleNumber}): 最終問題正解のため、結果を表示します。`); // 動作確認用ログ
+                }, 500);
         }
 
     } else {
         feedbackElement.textContent = "不正解。もう一度チームで情報を整理してみよう。";
-        feedbackElement.classList.add('incorrect'); // 不正解クラス追加
+        feedbackElement.classList.add('incorrect');
 
-        // 不正解の時に少し入力欄を揺らすアニメーション
         answerInput.classList.add('shake');
-        // アニメーションが終わったらクラスを削除
         setTimeout(() => {
             answerInput.classList.remove('shake');
-        }, 400); // アニメーション時間（CSSで指定した0.4s）に合わせる
+        }, 400);
 
-        // 最終問題で不正解の場合も結果を表示
         if (puzzleNumber === 3) {
-             setTimeout(() => { displayResult(false); }, 500);
+             setTimeout(() => {
+                 displayResult(false);
+                 console.log(`checkAnswer(${puzzleNumber}): 最終問題不正解のため、結果を表示します。`); // 動作確認用ログ
+                }, 500);
         }
     }
 }
@@ -145,8 +163,8 @@ function displayResult(isGameClear) {
     const explanation = document.getElementById('explanation');
 
     if (!resultSection || !finalMessage || !explanation) {
-        console.error("結果表示用の要素が見つかりません: #result, #finalMessage, または #explanation");
-        return; // 要素がなければ処理中断
+        console.error("displayResult エラー: 結果表示用の要素が見つかりません: #result, #finalMessage, または #explanation");
+        return;
     }
 
     if (isGameClear) {
@@ -156,9 +174,10 @@ function displayResult(isGameClear) {
         finalMessage.textContent = `残念！犯人の特定には至らなかった...。真犯人は【${answerKey3}】でした。`;
         finalMessage.style.color = 'red';
     }
-    explanation.innerText = explanationText; // innerTextで改行を反映
+    explanation.innerText = explanationText;
     resultSection.style.display = 'block';
-    resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); // 結果表示時にスクロール
+    resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    console.log(`displayResult: 結果を表示しました (isGameClear=${isGameClear})`); // 動作確認用ログ
 
     // オプション：前の設問を非表示にする場合
     // const puzzle1 = document.getElementById('puzzle1');
@@ -169,12 +188,26 @@ function displayResult(isGameClear) {
     // if(puzzle3) puzzle3.style.display = 'none';
 }
 
-// ページ読み込み完了後に処理を開始したい場合は、以下のコメントアウトを外す
-/*
+// ページ読み込み完了時に基本的な要素が存在するか確認する（デバッグ用）
 window.addEventListener('DOMContentLoaded', (event) => {
-    // ゲーム開始ボタンにイベントリスナーを設定する場合など、
-    // DOM要素へのアクセスが必要な初期化処理をここに入れる。
-    // ただし、今回はstartGame()がボタンのonclickで呼ばれるため、必須ではない。
     console.log('DOM fully loaded and parsed');
+    const elementsToCheck = ['story', 'puzzle1', 'puzzle2', 'puzzle3', 'result', 'answer1', 'feedback1', 'answer2', 'feedback2', 'answer3', 'feedback3', 'finalMessage', 'explanation'];
+    let allElementsFound = true;
+    elementsToCheck.forEach(id => {
+        if (!document.getElementById(id)) {
+            console.error(`初期チェックエラー: 要素 #${id} が見つかりません。HTMLを確認してください。`);
+            allElementsFound = false;
+        }
+    });
+    if (allElementsFound) {
+        console.log("初期チェック: 必要な基本要素はすべて存在します。");
+    } else {
+         console.error("初期チェック: いくつかの基本要素が見つかりませんでした。HTMLのIDを確認してください。");
+    }
+    // ボタンのonclick属性が正しく設定されているかも確認（ただし、これは実行時エラーで検知されることが多い）
+    const startButton = document.querySelector('#story button');
+    if (startButton && startButton.getAttribute('onclick') !== 'startGame()') {
+        console.warn("初期チェック警告: 捜査開始ボタンのonclick属性が 'startGame()' になっていない可能性があります。");
+    }
+    // 他のボタンも同様に確認可能
 });
-*/
